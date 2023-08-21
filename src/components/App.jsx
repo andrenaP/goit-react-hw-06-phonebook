@@ -29,13 +29,15 @@ export const App = () => {
   const handleSubmit = contactData => {
     const { name } = contactData;
 
-    const filterFind = contacts.find(
-      element => element.name.toLowerCase() === name.toLowerCase()
-    );
+    if (contacts) {
+      const filterFind = contacts.find(
+        element => element.name.toLowerCase() === name.toLowerCase()
+      );
 
-    if (filterFind) {
-      window.alert(`Name: ${name} is already in contacts`);
-      return 0;
+      if (filterFind) {
+        window.alert(`Name: ${name} is already in contacts`);
+        return 0;
+      }
     }
 
     const contactDataWithId = { ...contactData, id: nanoid() };
@@ -61,10 +63,15 @@ export const App = () => {
       <Section title="Phonebook">
         <ContactForm onSubmit={handleSubmit} />
       </Section>
-      <Section title="Contacts">
-        <Filter handleChange={handleChangeFilter} />
-        <ContactList contacts={visibleContacts()} deleteFunc={deleteContact} />
-      </Section>
+      {contacts && (
+        <Section title="Contacts">
+          <Filter handleChange={handleChangeFilter} />
+          <ContactList
+            contacts={visibleContacts()}
+            deleteFunc={deleteContact}
+          />
+        </Section>
+      )}
     </div>
   );
 };
