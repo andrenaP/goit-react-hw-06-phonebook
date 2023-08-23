@@ -1,7 +1,6 @@
-import { nanoid } from 'nanoid';
 import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
-  filter: '',
+  value: '',
 };
 
 export const filterSlice = createSlice({
@@ -9,12 +8,12 @@ export const filterSlice = createSlice({
   initialState,
   reducers: {
     filtering: (state, action) => {
-      state.filter = action.payload;
+      state.value = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
 export const { filtering } = filterSlice.actions;
-
 export default filterSlice.reducer;
+export const getfilterValue = state => state.filter.value;

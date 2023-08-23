@@ -1,26 +1,34 @@
 import { nanoid } from 'nanoid';
 import { createSlice } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 const initialState = {
-  contacts: [],
+  items: [],
 };
 
-export const contactSlice = createSlice({
+const contactSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {
     add: (state, action) => {
       const contactDataWithId = { ...action.payload, id: nanoid() };
-      state.contacts = [...state.contacts, contactDataWithId];
+      state.items = [...state.items, contactDataWithId];
     },
     filterContacts: (state, action) => {
-      state.contacts = state.contacts.filter(
+      state.items = state.items.filter(
         contact => contact.id !== action.payload
       );
     },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { add, filterContacts } = contactSlice.actions;
+const persistConfig = {
+  key: 'contacts',
+  storage,
+};
 
-export default contactSlice.reducer;
+const persistedReducer = persistReducer(persistConfig, contactSlice.reducer);
+
+export const { add, filterContacts } = contactSlice.actions;
+export default persistedReducer;
+export const getContactsItems = state => state.contacts.items;

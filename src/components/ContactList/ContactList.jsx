@@ -1,17 +1,31 @@
 import PropTypes from 'prop-types';
 import './ContactList.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { filterContacts, getContactsItems } from 'redux/contactSlice';
+import { getfilterValue } from 'redux/filterSlice';
 
-const ContactList = ({ contacts, deleteFunc }) => {
+const ContactList = () => {
+  const dispatch = useDispatch();
+
+  const contacts = useSelector(getContactsItems);
+  const filter = useSelector(getfilterValue);
+  const visibleContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
+  const deleteContact = id => {
+    dispatch(filterContacts(id));
+  };
+  if (visibleContacts.length === 0) return 'Nothing found';
   return (
     <ul className="ListOfNames">
-      {contacts.map(({ name, number, id }) => {
+      {visibleContacts.map(({ name, number, id }) => {
         return (
           <li key={id}>
             <span className="name">{name}</span>
             <span className="number">{number}</span>
             <button
               onClick={() => {
-                deleteFunc(id);
+                deleteContact(id);
               }}
             >
               Delete
