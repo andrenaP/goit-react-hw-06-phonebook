@@ -1,16 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
-import { nanoid } from 'nanoid';
+// import { nanoid } from 'nanoid';
 
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Section from './Section';
 import Filter from './Filter';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { add, filterContacts } from 'redux/contactSlice';
+import { filtering } from 'redux/filterSlice';
+
 export const App = () => {
-  const [contacts, setcontacts] = useState(() => {
-    return JSON.parse(localStorage.getItem('contacts')) ?? '';
-  });
-  const [filter, setfilter] = useState('');
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts.contacts);
+  const filter = useSelector(state => state.filter.filter);
+  // const [contacts, setcontacts] = useState(() => {
+  //   return JSON.parse(localStorage.getItem('contacts')) ?? '';
+  // });
+  // const [filter, setfilter] = useState('');
   const IsFirstRender = useRef(true);
 
   useEffect(() => {
@@ -23,7 +30,8 @@ export const App = () => {
   }, [contacts]);
 
   const handleChangeFilter = event => {
-    setfilter(event.target.value);
+    // setfilter(event.target.value);
+    dispatch(filtering(event.target.value));
   };
 
   const handleSubmit = contactData => {
@@ -40,18 +48,22 @@ export const App = () => {
       }
     }
 
-    const contactDataWithId = { ...contactData, id: nanoid() };
+    // const contactDataWithId = { ...contactData, id: nanoid() };
 
-    setcontacts(Lastcontacts => [...Lastcontacts, contactDataWithId]);
+    // setcontacts(Lastcontacts => [...Lastcontacts, contactDataWithId]);
+
+    dispatch(add(contactData));
   };
 
   const deleteContact = id => {
     //const filted = contacts.filter(contact => contact.id !== id);
     // if (filted.length === 0) ClearContact();
-    setcontacts(contactLast =>
-      contactLast.filter(contact => contact.id !== id)
-    );
+    // setcontacts(contactLast =>
+    //   contactLast.filter(contact => contact.id !== id)
+    // );
+    dispatch(filterContacts(id));
   };
+
   const visibleContacts = () => {
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
